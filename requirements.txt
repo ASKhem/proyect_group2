@@ -1,1 +1,7 @@
-[put requirements here]
+fastapi
+uvicorn
+requests
+pandas
+python-dotenv
+flake8
+pylance
