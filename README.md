@@ -5,7 +5,6 @@
 *Ubicación: A Coruña, Galicia, España*
 
 ---
-
 ## 1. Descripción General
 
 Este proyecto implementa el módulo de procesamiento de datos asignado al **Subgrupo 2**. Actúa como un servicio intermedio en una aplicación completa de análisis de datos de canciones de Spotify. Su función principal es consumir los datos brutos proporcionados por el Subgrupo 1, aplicar técnicas de Análisis Exploratorio de Datos (EDA) y limpieza, y finalmente exponer los datos procesados a través de una API REST para que el Subgrupo 3 pueda visualizarlos.
@@ -117,3 +116,68 @@ Una vez instalado y configurado, puedes iniciar el servidor FastAPI. Asegúrate 
 
 ```bash
 uvicorn main_subgrupo2:app --host 127.0.0.1 --port 8001 --reload
+```
+
+Explicación del comando:
+
+uvicorn: Lanza el servidor ASGI.
+main_subgrupo2:app: Le dice a Uvicorn que busque el objeto app (la instancia de FastAPI) dentro del archivo main_subgrupo2.py.
+--host 127.0.0.1: Hace que el servidor solo sea accesible desde tu propia máquina (localhost).
+--port 8001: Especifica el puerto en el que escuchará el servidor para este subgrupo.
+--reload: Activa el modo de recarga automática. Uvicorn monitorizará los cambios en los archivos .py y reiniciará el servidor automáticamente, lo cual es muy útil durante el desarrollo.
+El servidor estará funcionando y accesible en http://127.0.0.1:8001.
+
+9. Uso y Endpoints de la API
+La API expuesta por este servicio tiene los siguientes endpoints principales:
+
+Endpoint de Datos Limpios:
+
+URL: http://127.0.0.1:8001/cleaned_songs
+Método: GET
+Descripción: Devuelve una respuesta JSON que contiene la lista completa de canciones después de haber sido procesadas (limpieza de nulos, corrección de tipos, eliminación de duplicados, etc.). Este es el endpoint que el Subgrupo 3 consumirá.
+Respuesta Exitosa (Código 200):
+
+```json	
+[
+  {
+    "Track Name": "Song Title 1",
+    "Track Artist": "Artist Name",
+    "Track Album Release Date": "YYYY-MM-DDTHH:MM:SS", // Formato ISO después de procesar
+    "Energy": 0.85,
+    "Tempo": 120.0,
+    // ... resto de campos procesados ...
+  },
+  {
+    "Track Name": "Song Title 2",
+    // ...
+  }
+]
+```
+
+### Respuesta de Error
+En caso de problemas (ej. no se puede conectar al Subgrupo 1, error interno de procesamiento), devolverá un código de estado HTTP de error (ej. 500, 503) con un detalle en JSON.
+
+### Endpoints de Documentación Automática
+FastAPI genera documentación interactiva automáticamente.
+
+- **Swagger UI:** http://127.0.0.1:8001/docs
+  Permite ver los endpoints disponibles, sus parámetros, descripciones y probarlos directamente desde el navegador.
+- **ReDoc:** http://127.0.0.1:8001/redoc
+  Ofrece una vista alternativa de la documentación de la API.
+
+## 10. Resumen de Pasos de EDA y Limpieza Implementados
+El script `main_subgrupo2.py` realiza las siguientes operaciones principales sobre los datos recibidos:
+
+1. **Carga y Estructura:** Carga los datos JSON en un DataFrame de Pandas.
+2. **Manejo de Nulos:** Identifica y elimina filas con valores nulos en columnas consideradas críticas (ej. Track ID, Track Album Release Date después de la conversión). Se registra la cantidad de filas eliminadas.
+3. **Conversión de Tipos:** Convierte la columna Track Album Release Date a objetos datetime de Pandas. Maneja errores durante la conversión (valores no válidos resultan en NaT y se eliminan). Asegura que columnas numéricas (Energy, Tempo, Track Popularity, etc.) tengan tipos numéricos (float o int), intentando la conversión si llegan como texto.
+4. **Eliminación de Duplicados:** Elimina filas duplicadas basándose en el identificador único Track ID, conservando la primera aparición de cada canción. Se registra la cantidad de duplicados eliminados.
+5. **Logging:** Todas las operaciones importantes, advertencias y errores se registran usando el módulo logging para facilitar la depuración y el seguimiento.
+
+(Nota: Se podrían añadir pasos adicionales como normalización de texto, imputación de valores faltantes en otras columnas, o creación de nuevas características si el análisis lo requiriera).
+
+## 11. Pruebas (Testing)
+Actualmente, este proyecto no incluye un conjunto formal de pruebas automatizadas (ej. usando pytest). Para un desarrollo más robusto, se recomienda añadir tests unitarios y/o de integración, especialmente para las funciones de limpieza de datos (`perform_eda_and_cleaning`) y para verificar la respuesta del endpoint usando librerías como `httpx`.
+
+## 12. Contribuyentes
+Subgrupo 2: [Aquí irían los nombres de los miembros del Subgrupo 2]
