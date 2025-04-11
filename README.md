@@ -23,9 +23,7 @@ proyect_group2/
 1. **Crear y activar entorno virtual:**
 ```bash
 python -m venv venv
-source venv/bin/activate  # Linux/Mac
-# o
-.\venv\Scripts\activate  # Windows
+source venv/bin/activate
 ```
 
 2. **Instalar dependencias:**

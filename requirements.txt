@@ -5,3 +5,4 @@ pandas
 python-dotenv
 flake8
 pylance
+pandas
